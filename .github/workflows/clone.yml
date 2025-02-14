@@ -1,25 +1,16 @@
-name: Clone Private Repo
+name: Repository Dispatch Workflow
 
 on:
-  push:
-    paths:
-     - .github/workflows/clone.yml
-  
+  repository_dispatch:
+    types: [run-workflow]
 
 jobs:
-  clone:
+  run-workflow:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Get Token
-      id: get_workflow_token
-      uses: peter-murray/workflow-application-token-action@v2
-      with:
-        application_id: ${{ vars.CONG_ORG_APPS_ID }}
-        application_private_key: ${{ secrets.CONG_ORG_APPS_PRIVATE_KEY }} 
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - uses: actions/checkout@v4
-      with:
-        token: ${{ steps.get_workflow_token.outputs.token }}
-        repository: cong-organization/test_build
-        # https://github.com/cong-organization/test_build.git
+      - name: Run Workflow
+        run: echo "Workflow triggered by repository dispatch event."
